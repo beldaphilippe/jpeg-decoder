@@ -2,7 +2,7 @@
 
 ## Description
 
-**Note**
+**Note**  
 Ce projet a été réalisé en équipe de 3 dans le cadre du projet de fin de première année à l'Ensimag, en une durée de deux semaines et demi (en comptant les week-ends et jours feriés) durant le mois de mai 2025.  
 
 
