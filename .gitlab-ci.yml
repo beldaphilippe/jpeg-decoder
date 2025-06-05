@@ -1,0 +1,138 @@
+# This file is a template, and might need editing before it works on your project.
+# This is a sample GitLab CI/CD configuration file that should run without any modifications.
+# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
+# it uses echo commands to simulate the pipeline execution.
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+#
+# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+#
+# You can copy and paste this template into a new `.gitlab-ci.yml` file.
+# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
+#
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - test
+
+build-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  script:
+    - apk update && apk add libc-dev gcc make
+    - make jpeg2ppm_sans_opt
+  artifacts:
+    untracked: true
+    when: on_success
+    expire_in: 20 min
+
+test-module:
+  stage: test
+  script:
+    - apk update && apk add libc-dev gcc make
+    - TEST=$(make TEST_OPTION='sans_opt' CFLAGS_TEST=' -std=c99 -Iinclude/ -O0 -lm' LDFLAGS_TEST=' -lm' test_run | sed -e "s/\r//g" -e "s/\t/ /g")
+    - echo -e "$TEST"
+    - if [ "$(echo -e $TEST | grep 'FAILED')" != "" ]; then exit 1; fi
+
+test-albert:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/albert.pgm images/albert.jpg
+    - if [ "$(diff out/albert.pgm valid_out/albert.pgm)" != "" ]; then exit 1; fi
+
+test-biiiiiig:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/biiiiiig.ppm images/biiiiiig.jpg
+    - if [ "$(diff out/biiiiiig.ppm valid_out/biiiiiig.ppm)" != "" ]; then exit 1; fi
+
+test-bisou:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/bisou.pgm images/bisou.jpeg
+    - if [ "$(diff out/bisou.pgm valid_out/bisou.pgm)" != "" ]; then exit 1; fi
+    
+test-complexite:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/complexite.pgm images/complexite.jpeg
+    - if [ "$(diff out/complexite.pgm valid_out/complexite.pgm)" != "" ]; then exit 1; fi
+
+test-gris:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/gris.pgm images/gris.jpg
+    - if [ "$(diff out/gris.pgm valid_out/gris.pgm)" != "" ]; then exit 1; fi
+
+test-horizontal:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/horizontal.ppm images/horizontal.jpg
+    - if [ "$(diff out/horizontal.ppm valid_out/horizontal.ppm)" != "" ]; then exit 1; fi
+
+test-invader:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/invader.pgm images/invader.jpeg
+    - if [ "$(diff out/invader.pgm valid_out/invader.pgm)" != "" ]; then exit 1; fi
+
+test-poupoupidou_bw:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/poupoupidou_bw.pgm images/poupoupidou_bw.jpg
+    - if [ "$(diff out/poupoupidou_bw.pgm valid_out/poupoupidou_bw.pgm)" != "" ]; then exit 1; fi
+
+test-shaun_the_sheep:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/shaun_the_sheep.ppm images/shaun_the_sheep.jpeg
+    - if [ "$(diff out/shaun_the_sheep.ppm valid_out/shaun_the_sheep.ppm)" != "" ]; then exit 1; fi
+
+test-thumbs:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/thumbs.ppm images/thumbs.jpg
+    - if [ "$(diff out/thumbs.ppm valid_out/thumbs.ppm)" != "" ]; then exit 1; fi
+
+test-vertical:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/vertical.ppm images/vertical.jpg
+    - if [ "$(diff out/vertical.ppm valid_out/vertical.ppm)" != "" ]; then exit 1; fi
+
+test-zig-zag:
+  stage: test
+  script:
+    - mkdir -p out
+    - ./jpeg2ppm -o out/zig-zag.ppm images/zig-zag.jpg
+    - if [ "$(diff out/zig-zag.ppm valid_out/zig-zag.ppm)" != "" ]; then exit 1; fi
+
+#test-nb-relatif:
+#  stage: test       # s'exécute à l'étape 'test'
+#  script:
+#    - mkdir -p out  # on crée le répertoire de sortie
+#    - ./jpeg2ppm --outfile=./out/invader.pgm ./images/invader.jpeg
+#    - test -f ./out/invader.pgm # on vérifie que le fichier de sortie existe
+
+#test-nb-absolu:
+#  stage: test       # s'exécute à l'étape 'test'
+#  script:
+#    - mkdir -p out  # on crée le répertoire de sortie
+#    - echo $(pwd)/images/invader.jpeg # regardez, un chemin absolu !
+#    - ./jpeg2ppm --outfile=$(pwd)/out/invader.pgm $(pwd)/images/invader.jpeg
+#    - test -f ./out/invader.pgm # on vérifie que le fichier de sortie existe

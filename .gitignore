@@ -1,0 +1,9 @@
+*.blabla
+.vscode*
+images/**
+obj/**
+out/**
+bin/**
+gmon.out
+jpeg2ppm
+compile_flags.txt
